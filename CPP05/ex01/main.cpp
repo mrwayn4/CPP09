@@ -4,8 +4,8 @@ int main()
 {
     try
     {
-        Bureaucrat b("idder", 14);
-        Form f("form1", 11, -1);
+        Bureaucrat b("idder",150);
+        Form f("form1", 11, 1);
 
         b.decrementGrade();
     }
@@ -15,11 +15,10 @@ int main()
     }
     try
     {
-        Bureaucrat b("idder", 8);
-        Form f("form1", 7, 1); 
+        Bureaucrat b("idder", 10);
+        Form f("form1", 8, 8); 
         std::cout << f << std::endl;
-        f.beSigned(b);
-
+        b.signForm(f);
     }
     catch(std::exception & e)
     {
