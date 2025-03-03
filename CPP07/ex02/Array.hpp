@@ -34,4 +34,10 @@ class Array
             throw std::out_of_range("indeex out of range");
         return (arr[index]);
     }
+    const T&  operator[](unsigned int index)
+    {
+        if (index >= _size)
+            throw std::out_of_range("indeex out of range");
+        return (arr[index]);
+    }
 };
