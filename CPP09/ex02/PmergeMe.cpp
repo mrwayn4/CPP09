@@ -23,40 +23,50 @@ void recursivesort_vector(std::vector<std::pair<int, int> >& pairs, size_t start
 {
     if (start >= end)
         return;
-    std::pair<int, int> pivot = pairs[end];
-    size_t i = start;
-    for (size_t j = start; j < end; j++)
+    size_t half = start + (end - start) / 2;
+
+    recursivesort_vector(pairs, start, half);
+    recursivesort_vector(pairs, half + 1, end);
+    std::vector<std::pair<int, int> > tmp(end - start + 1);
+    size_t i = start, j = half + 1, k = 0;
+    while (i <= half && j <= end)
     {
-        if (pairs[j].first < pivot.first)
-        {
-            std::swap(pairs[i], pairs[j]);
-            i++;
-        }
+        if (pairs[i].first < pairs[j].first)
+            tmp[k++] = pairs[i++];
+        else
+            tmp[k++] = pairs[j++];
     }
-    std::swap(pairs[i], pairs[end]);
-    if (i > 0)
-        recursivesort_vector(pairs, start, i - 1);
-    recursivesort_vector(pairs, i + 1, end);
+    while (i <= half)
+        tmp[k++] = pairs[i++];
+    while (j <= end)
+        tmp[k++] = pairs[j++];
+    for (size_t i = 0; i < tmp.size(); i++)
+        pairs[start + i] = tmp[i];
 }
 
 void recursivesort_deque(std::deque<std::pair<int, int> >& pairs, size_t start, size_t end)
 {
     if (start >= end)
         return;
-    std::pair<int, int> pivot = pairs[end];
-    size_t i = start;
-    for (size_t j = start; j < end; j++)
+    size_t half = start + (end - start) / 2;
+
+    recursivesort_deque(pairs, start, half);
+    recursivesort_deque(pairs, half + 1, end);
+    std::deque<std::pair<int, int> > tmp(end - start + 1);
+    size_t i = start, j = half + 1, k = 0;
+    while (i <= half && j <= end)
     {
-        if (pairs[j].first < pivot.first)
-        {
-            std::swap(pairs[i], pairs[j]);
-            i++;
-        }
+        if (pairs[i].first < pairs[j].first)
+            tmp[k++] = pairs[i++];
+        else
+            tmp[k++] = pairs[j++];
     }
-    std::swap(pairs[i], pairs[end]);
-    if (i > 0)
-        recursivesort_deque(pairs, start, i - 1);
-    recursivesort_deque(pairs, i + 1, end);
+    while (i <= half)
+        tmp[k++] = pairs[i++];
+    while (j <= end)
+        tmp[k++] = pairs[j++];
+    for (size_t i = 0; i < tmp.size(); i++)
+        pairs[start + i] = tmp[i];
 }
 
 std::vector<int> jacob_algo_vector(int size)
