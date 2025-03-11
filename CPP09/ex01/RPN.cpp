@@ -1,7 +1,7 @@
 #include "RPN.hpp"
 
 bool RPN(std::string operation) {
-    std::stack<int> numbers;
+    std::stack<float> numbers;
     std::istringstream iss(operation);
     std::string token;
     while (iss >> token)
@@ -15,8 +15,8 @@ bool RPN(std::string operation) {
                 std::cerr << "Error\n";
                 return false;
             }
-            int n2 = numbers.top(); numbers.pop();
-            int n1 = numbers.top(); numbers.pop();
+            float n2 = numbers.top(); numbers.pop();
+            float n1 = numbers.top(); numbers.pop();
             if (token[0] == '+')
                 numbers.push(n1 + n2);
             else if (token[0] == '-')
