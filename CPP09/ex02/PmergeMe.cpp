@@ -19,10 +19,110 @@ int parseargs(char **av, std::vector<int>& v, int ac)
     return (1);
 }
 
-void displayPairsAfter(const std::vector<std::pair<int, int> >& pairs)
+void recursivesort_vector(std::vector<std::pair<int, int> >& pairs, size_t start, size_t end)
 {
-    for (size_t i = 0; i < pairs.size(); ++i)
-        std::cout << "Pair after: " << pairs[i].first << " " << pairs[i].second << std::endl;
+    if (start >= end)
+        return;
+    std::pair<int, int> pivot = pairs[end];
+    size_t i = start;
+    for (size_t j = start; j < end; j++)
+    {
+        if (pairs[j].first < pivot.first)
+        {
+            std::swap(pairs[i], pairs[j]);
+            i++;
+        }
+    }
+    std::swap(pairs[i], pairs[end]);
+    if (i > 0)
+        recursivesort_vector(pairs, start, i - 1);
+    recursivesort_vector(pairs, i + 1, end);
+}
+
+void recursivesort_deque(std::deque<std::pair<int, int> >& pairs, size_t start, size_t end)
+{
+    if (start >= end)
+        return;
+    std::pair<int, int> pivot = pairs[end];
+    size_t i = start;
+    for (size_t j = start; j < end; j++)
+    {
+        if (pairs[j].first < pivot.first)
+        {
+            std::swap(pairs[i], pairs[j]);
+            i++;
+        }
+    }
+    std::swap(pairs[i], pairs[end]);
+    if (i > 0)
+        recursivesort_deque(pairs, start, i - 1);
+    recursivesort_deque(pairs, i + 1, end);
+}
+
+std::vector<int> jacob_algo_vector(int size)
+{
+    std::vector<int> jacobsthal;
+    std::vector<int> jacobindex;
+    jacobsthal.push_back(0);
+    jacobsthal.push_back(1);
+    jacobsthal.push_back(3);
+
+    int z = 0;
+    for(size_t i = 3; z < size; i++)
+    {
+        z = jacobsthal[i - 1] + (2 * jacobsthal[i - 2]);
+        jacobsthal.push_back(z);
+    }
+    
+    int x = 1;
+    for(size_t i = 0; i < jacobsthal.size() ;i++)
+    {
+        if(jacobsthal[i] < size)
+            jacobindex.push_back(jacobsthal[i]);
+        int y = jacobsthal[i] -1;
+        while(y > x)
+        {
+            if(y < size)
+                jacobindex.push_back(y);
+            y--;
+        }
+        x = jacobsthal[i];
+    }
+
+    return jacobindex;
+}
+
+std::deque<int> jacob_algo_deque(int size)
+{
+    std::deque<int> jacobsthal;
+    std::deque<int> jacobindex;
+    jacobsthal.push_back(0);
+    jacobsthal.push_back(1);
+    jacobsthal.push_back(3);
+
+    int z = 0;
+    for(size_t i = 3; z < size; i++)
+    {
+        z = jacobsthal[i - 1] + (2 * jacobsthal[i - 2]);
+        jacobsthal.push_back(z);
+    }
+    
+    int x = 1;
+    for(size_t i = 0; i < jacobsthal.size() ;i++)
+    {
+        if(jacobsthal[i] < size)
+            jacobindex.push_back(jacobsthal[i]);
+        int y = jacobsthal[i] -1;
+        while(y > x)
+        {
+            if(y < size)
+                jacobindex.push_back(y);
+            y--;
+        }
+        x = jacobsthal[i];
+    }
+
+    return jacobindex;
 }
 
 void sortvector(std::vector<int>& v)
@@ -33,17 +133,8 @@ void sortvector(std::vector<int>& v)
         unpaired = v.back();
         v.pop_back();
     }
-    std::vector<int> jacobsthal(v.size());//up tp length of v
-    if (v.size() > 0)
-        jacobsthal[0] = 0;
-    if (v.size() > 1)
-        jacobsthal[1] = 1;
-    std::vector<int> jacobindex(v.size());
-    jacobindex[0] = 0;
-    jacobindex[1] = 1;
-     // the for loop for the jacobsthal sequence
-    for (size_t i = 2; i < v.size(); i++)
-        jacobsthal[i] = jacobsthal[i - 1] + 2 * jacobsthal[i - 2] + 1;
+    std::vector<int> jacobsthal(v.size());
+    jacobsthal = jacob_algo_vector(v.size());
     std::vector<std::pair<int, int> > pairs;
     for (size_t i = 0; i < v.size(); i += 2)
     {
@@ -52,20 +143,8 @@ void sortvector(std::vector<int>& v)
         if (largest < lowest)
             std::swap(largest, lowest);
         pairs.push_back(std::make_pair(largest, lowest));
-        // std::cout << "Pair: " << largest << " " << lowest << std::endl;
     }
-    for (size_t i = 1; i < pairs.size(); i++)
-    {
-        std::pair<int, int> tmp = pairs[i];
-        size_t j = i;
-        while (j > 0 && pairs[j - 1].first > tmp.first)
-        {
-            pairs[j] = pairs[j - 1];
-            j--;
-        }
-        pairs[j] = tmp;
-    }
-    // displayPairsAfter(pairs);
+    recursivesort_vector(pairs, 0, pairs.size() - 1);
     std::vector<int> mainchain, pend;
 
     mainchain.push_back(pairs[0].second);
@@ -74,17 +153,10 @@ void sortvector(std::vector<int>& v)
     for (size_t i = 0; i < pairs.size(); i++)
         pend.push_back(pairs[i].second);
     pend.erase(pend.begin());
-    // for (size_t i = 0; i < mainchain.size(); i++)
-    //     std::cout << "Mainchain: " << mainchain[i] << std::endl;
-    // for (size_t i = 0; i < pend.size(); i++)
-    //     std::cout << "Pend: " << pend[i] << std::endl;
     for (size_t i = 0; i < pend.size(); i++)
     {
-        if (static_cast<size_t>(jacobsthal[i]) < pend.size())
-        {
-            std::vector<int>::iterator it = std::lower_bound(mainchain.begin(), mainchain.end(), pend[i]);
-            mainchain.insert(it, pend[jacobsthal[i]]);
-        }
+        std::vector<int>::iterator it = std::lower_bound(mainchain.begin(), mainchain.end(), pend[i]);
+        mainchain.insert(it, pend[i]);
     }
     if (unpaired != -2)
     {
@@ -105,13 +177,9 @@ void sortdeque(std::deque<int>& d)
         unpaired = d.back();
         d.pop_back();
     }
-    std::deque<int> jacobsthal(d.size());//up tp length of d
-    if (d.size() > 0)
-        jacobsthal[0] = 0;
-    if (d.size() > 1)
-        jacobsthal[1] = 1;
-    for (size_t i = 2; i < d.size(); i++)
-        jacobsthal[i] = jacobsthal[i - 1] + 2 * jacobsthal[i - 2] + 1;
+    std::deque<int> jacobsthal(d.size());
+    jacobsthal = jacob_algo_deque(d.size());
+
     std::deque<std::pair<int, int> > pairs;
     for (size_t i = 0; i < d.size(); i += 2)
     {
@@ -120,20 +188,8 @@ void sortdeque(std::deque<int>& d)
         if (largest < lowest)
             std::swap(largest, lowest);
         pairs.push_back(std::make_pair(largest, lowest));
-        // std::cout << "Pair: " << largest << " " << lowest << std::endl;
     }
-    for (size_t i = 1; i < pairs.size(); i++)
-    {
-        std::pair<int, int> tmp = pairs[i];
-        size_t j = i;
-        while (j > 0 && pairs[j - 1].first > tmp.first)
-        {
-            pairs[j] = pairs[j - 1];
-            j--;
-        }
-        pairs[j] = tmp;
-    }
-    // displayPairsAfter(pairs);
+    recursivesort_deque(pairs, 0, pairs.size() - 1);
     std::deque<int> mainchain, pend;
 
     mainchain.push_back(pairs[0].second);
@@ -142,17 +198,11 @@ void sortdeque(std::deque<int>& d)
     for (size_t i = 0; i < pairs.size(); i++)
         pend.push_back(pairs[i].second);
     pend.erase(pend.begin());
-    // for (size_t i = 0; i < mainchain.size(); i++)
-    //     std::cout << "Mainchain: " << mainchain[i] << std::endl;
-    // for (size_t i = 0; i < pend.size(); i++)
-    //     std::cout << "Pend: " << pend[i] << std::endl;
+
     for (size_t i = 0; i < pend.size(); i++)
     {
-        if (static_cast<size_t>(jacobsthal[i]) < pend.size())
-        {
-            std::deque<int>::iterator it = std::lower_bound(mainchain.begin(), mainchain.end(), pend[i]);
-            mainchain.insert(it, pend[jacobsthal[i]]);
-        }
+        std::deque<int>::iterator it = std::lower_bound(mainchain.begin(), mainchain.end(), pend[i]);
+        mainchain.insert(it, pend[i]);
     }
     if (unpaired != -2)
     {
@@ -164,6 +214,7 @@ void sortdeque(std::deque<int>& d)
         std::cout << mainchain[i] << " ";
     std::cout << std::endl;
 }
+
 
 void sort(std::vector<int>& v)
 {
