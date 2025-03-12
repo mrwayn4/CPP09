@@ -54,7 +54,8 @@ int Span::longestSpan()
 {
     if (list.size() < 2)
         throw std::length_error("Not enough elements to find a span");
-    return *list.rbegin() - *list.begin();//we use pointer to give The actual element (integer).
+    return *list.rbegin() - *list.begin();//we use pointer to give The actual element (integer). rbegin() is largets element
+    // end is one past the last element
 }
 
 void Span::Range(std::multiset<int>::iterator begin, std::multiset<int>::iterator end)

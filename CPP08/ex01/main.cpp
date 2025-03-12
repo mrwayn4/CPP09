@@ -4,7 +4,7 @@
 
 int main() {
     try {
-        Span sp(-1);
+        Span sp(10);
         sp.addNumber(6);
         sp.addNumber(3);
         sp.addNumber(16);
