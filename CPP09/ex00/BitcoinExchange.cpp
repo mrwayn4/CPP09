@@ -22,11 +22,8 @@ BitcoinExchange::BitcoinExchange()
             std::cerr << "Error: bad input in database => " << line << std::endl;
             continue;
         }
-        try
-        {
-            value = std::stof(valuestr);
-        }
-        catch(const std::exception&)
+        std::stringstream sv(valuestr);
+        if (!(sv >> value))
         {
             std::cerr << "Error: could not convert value to float in database => " << line << std::endl;
             continue;
@@ -127,25 +124,19 @@ void BitcoinExchange::update(std::string input)
             continue;
         }
         float value;
-        try
-        {
-            valueStr.erase(0, valueStr.find_first_not_of(" \t"));
-            valueStr.erase(valueStr.find_last_not_of(" \t") + 1);
-            value = std::stof(valueStr);
-            if (value < 0)
-            {
-                std::cerr << "Error: not a positive number." << std::endl;
-                continue;
-            }
-            if (value > 1000)
-            {
-                std::cerr << "Error: too large a number." << std::endl;
-                continue;
-            }
-        }
-        catch(const std::exception&)
-        {
+        std::stringstream ss(valueStr);
+        if (!(ss >> value)) {
             std::cerr << "Error: bad input => " << line << std::endl;
+            continue;
+        }
+        if (value < 0)
+        {
+            std::cerr << "Error: not a positive number." << std::endl;
+            continue;
+        }
+        if (value > 1000)
+        {
+            std::cerr << "Error: too large a number." << std::endl;
             continue;
         }
         float bitcoinPrice = price(date);
