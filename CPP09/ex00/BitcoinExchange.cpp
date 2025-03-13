@@ -6,7 +6,7 @@ BitcoinExchange::BitcoinExchange()
     if (!file.is_open())
     {
         std::cerr << "Error: could not open file" << std::endl;
-        return;
+        exit(1);
     }
     std::string line;
     bool first = true;
