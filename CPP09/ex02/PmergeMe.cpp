@@ -233,14 +233,14 @@ void sort(std::vector<int>& v)
         std::cout << v[i] << " ";
     std::cout << std::endl;
     clock_t start = clock();
-    sortvector(v);
-    clock_t end = clock();
-    double time = double(end - start) / (CLOCKS_PER_SEC) * 1000000;
-    std::cout << "Time to process a range of " << v.size() << " elements with std::vector : " << time << "us" << std::endl;
-    start = clock();
     std::deque<int> d(v.begin(), v.end());
     sortdeque(d);
+    clock_t end = clock();
+    double time = double(end - start) / (CLOCKS_PER_SEC) * 1000000;
+    std::cout << "Time to process a range of " << v.size() << " elements with std::deque : " << time << "us" << std::endl;
+    start = clock();
+    sortvector(v);
     end = clock();
     time = double(end - start) / (CLOCKS_PER_SEC) * 1000000;
-    std::cout << "Time to process a range of " << v.size() << " elements with std::deque : " << time << "us" << std::endl;
+    std::cout << "Time to process a range of " << v.size() << " elements with std::vector : " << time << "us" << std::endl;
 }
