@@ -137,22 +137,25 @@ void BitcoinExchange::update(std::string input)
             continue;
         }
         size_t dot = valueStr.find('.');
-        if (dot != std::string::npos)
+        if (value == 1000)
         {
-            std::string decimal = valueStr.substr(dot + 1);
-            bool zero = false;
-            for (size_t i = 0; i < decimal.length(); i++)
+            if (dot != std::string::npos)
             {
-                if (decimal[i] != '0')
+                std::string decimal = valueStr.substr(dot + 1);
+                bool zero = false;
+                for (size_t i = 0; i < decimal.length(); i++)
                 {
-                    zero = true;
-                    break;
+                    if (decimal[i] != '0')
+                    {
+                        zero = true;
+                        break;
+                    }
                 }
-            }
-            if (zero)
-            {
-                std::cerr << "Error: too large a number." << std::endl;
-                continue;
+                if (zero)
+                {
+                    std::cerr << "Error: too large a number." << std::endl;
+                    continue;
+                }
             }
         }
         if (value < 0)
