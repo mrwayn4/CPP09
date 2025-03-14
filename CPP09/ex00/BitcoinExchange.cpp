@@ -84,18 +84,22 @@ bool BitcoinExchange::parse_date(const std::string& date)
 
 float BitcoinExchange::price(const std::string& date)
 {
-    std::map<std::string, float>::iterator it = sort.lower_bound(date);
-    if (it == sort.end()) 
-        return (--it)->second;
-
-    if (it != sort.begin() && (it == sort.end() || it->first > date)) 
-        --it;
-    return it->second;
+    std::map<std::string, float>::iterator it = sort.upper_bound(date);
+    if (it != sort.begin())
+    {
+        it--;
+        return it->second;
+    }
+    else
+    {
+        std::cerr << "Error: no data available for this date." << std::endl;
+        return (-1);
+    }
 }
 
 void BitcoinExchange::update(std::string input)
 {
-    std::ifstream file(input);
+    std::ifstream file(input.c_str());
     if (!file.is_open())
     {
         std::cerr << "Error: could not open file." << std::endl;
@@ -119,13 +123,12 @@ void BitcoinExchange::update(std::string input)
         std::string date = line.substr(0, split);
         std::string valueStr = line.substr(split + 3);
         if (!parse_date(date))
-        {
-            std::cerr << "Error: bad input => " << date << std::endl;
             continue;
-        }
         float value;
+        char extra;
         std::stringstream ss(valueStr);
-        if (!(ss >> value)) {
+        if (!(ss >> value) || (ss >> extra))
+        {
             std::cerr << "Error: bad input => " << line << std::endl;
             continue;
         }
@@ -140,6 +143,8 @@ void BitcoinExchange::update(std::string input)
             continue;
         }
         float bitcoinPrice = price(date);
+        if (bitcoinPrice == -1)
+            continue;
         float result = value * bitcoinPrice;
         std::cout << date << " => " << value << " = " << result << std::endl;
     }
