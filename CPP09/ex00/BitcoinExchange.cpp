@@ -12,8 +12,11 @@ BitcoinExchange::BitcoinExchange()
     bool first = true;
     while (std::getline(file, line))
     {
-        if (first) { first = false; continue; }
-
+        if (first) 
+        {  
+            first = false; 
+            continue; 
+        }
         std::stringstream ss(line);
         std::string date, valuestr;
         float value;
@@ -106,14 +109,15 @@ void BitcoinExchange::update(std::string input)
         return;
     }
     std::string line;
-    bool first = true;
+    if (!std::getline(file, line) || line != "date | value")
+    {
+        std::cerr << "Error: invalid file format. Expected header: 'date | value'." << std::endl;
+        return;
+    }
     while (std::getline(file, line))
     {
-        if (first && line.find("date | value") != std::string::npos)
-        {
-            first = false;
+        if (line.empty())
             continue;
-        }
         size_t split = line.find(" | ");
         if (split == std::string::npos)
         {
@@ -131,6 +135,25 @@ void BitcoinExchange::update(std::string input)
         {
             std::cerr << "Error: bad input => " << line << std::endl;
             continue;
+        }
+        size_t dot = valueStr.find('.');
+        if (dot != std::string::npos)
+        {
+            std::string decimal = valueStr.substr(dot + 1);
+            bool zero = false;
+            for (size_t i = 0; i < decimal.length(); i++)
+            {
+                if (decimal[i] != '0')
+                {
+                    zero = true;
+                    break;
+                }
+            }
+            if (zero)
+            {
+                std::cerr << "Error: too large a number." << std::endl;
+                continue;
+            }
         }
         if (value < 0)
         {
