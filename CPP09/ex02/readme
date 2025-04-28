@@ -1,0 +1,3 @@
+@mrwayn4 ➜ /workspaces/CPP09/CPP09/ex02 (master) $ ./PmergeMe 2
+Before: 2 
+Segmentation fault (core dumped)
