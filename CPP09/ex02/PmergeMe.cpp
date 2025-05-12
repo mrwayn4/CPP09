@@ -131,12 +131,16 @@ std::deque<int> jacob_algo_deque(int size)
         }
         x = jacobsthal[i];
     }
-
     return jacobindex;
 }
 
 void sortvector(std::vector<int>& v)
 {
+    if (v.size() == 1)
+    {
+        std::cout << "After: " << v[0] << "\n";
+        return ;
+    }
     int unpaired = -2;
     if (v.size() % 2)
     {
@@ -163,16 +167,21 @@ void sortvector(std::vector<int>& v)
     for (size_t i = 0; i < pairs.size(); i++)
         pend.push_back(pairs[i].second);
     pend.erase(pend.begin());
-    for (size_t i = 0; i < pend.size(); i++)
+    int j = 0;
+    for (size_t i = 0; j < (int)pend.size(); i++)
     {
-        std::vector<int>::iterator it = std::lower_bound(mainchain.begin(), mainchain.end(), pend[i]);
-        mainchain.insert(it, pend[i]);
+        if (i >= jacobsthal.size() || jacobsthal[i] >= (int)pend.size())
+            continue;
+        std::vector<int>::iterator it = std::lower_bound(mainchain.begin(), mainchain.end(), pend[jacobsthal[i]]);
+        mainchain.insert(it, pend[jacobsthal[i]]);
+        j++;
     }
     if (unpaired != -2)
     {
         std::vector<int>::iterator it = std::lower_bound(mainchain.begin(), mainchain.end(), unpaired);
         mainchain.insert(it, unpaired);
     }
+
     std::cout << "After: ";
     for (size_t i = 0; i < mainchain.size(); i++)
         std::cout << mainchain[i] << " ";
@@ -181,6 +190,11 @@ void sortvector(std::vector<int>& v)
 
 void sortdeque(std::deque<int>& d)
 {
+    if (d.size() == 1)
+    {
+        std::cout << "After: " << d[0] << "\n";
+        return ;
+    }
     int unpaired = -2;
     if (d.size() % 2)
     {
@@ -209,11 +223,16 @@ void sortdeque(std::deque<int>& d)
         pend.push_back(pairs[i].second);
     pend.erase(pend.begin());
 
-    for (size_t i = 0; i < pend.size(); i++)
+    int j = 0;
+    for (size_t i = 0; j < (int)pend.size(); i++)
     {
-        std::deque<int>::iterator it = std::lower_bound(mainchain.begin(), mainchain.end(), pend[i]);
-        mainchain.insert(it, pend[i]);
+        if (i >= jacobsthal.size() || jacobsthal[i] >= (int)pend.size())
+            continue;
+        std::deque<int>::iterator it = std::lower_bound(mainchain.begin(), mainchain.end(), pend[jacobsthal[i]]);
+        mainchain.insert(it, pend[jacobsthal[i]]);
+        j++;
     }
+
     if (unpaired != -2)
     {
         std::deque<int>::iterator it = std::lower_bound(mainchain.begin(), mainchain.end(), unpaired);
